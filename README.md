@@ -46,6 +46,8 @@ Welcome to my Neovim configuration repository! This setup is designed to enhance
 ### Other useful plugins
 - **[kitty-scrollback.nvim](https://github.com/mikesmithgh/kitty-scrollback.nvim)**: For Kitty Scrollback
 
+- **[cmp-path](https://github.com/hrsh7th/cmp-path)**: Adds path completion to the `nvim-cmp` completion framework.
+- **[yanky](https://github.com/gbprod/yanky.nvim)**: Enhances the default yank and paste functionality in Neovim.
 ---
 
 Feel free to explore the configuration and customize it to your needs! For more information or contributions, check out the individual plugin repositories linked above.
