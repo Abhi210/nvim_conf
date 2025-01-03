@@ -47,6 +47,10 @@ map('n', '<leader>wn', '<cmd>WorkspacesOpen nvim<CR>', { desc = "Nvim config" })
 map('n', '<leader>wr', '<cmd>WorkspacesOpen reascripts<CR>', { desc = "ReaScripts" })
 map('n', '<leader>?', '<cmd>Cheatsheet<cr>', { desc = "Cheatsheet" })
 
+-- Copy to system clipboard
+map('v', '<C-C>', '"+y', { desc = 'Copy to system clipboard' })  -- Visual mode
+map('n', '<C-C>', '"+y', { desc = 'Copy to system clipboard' })  -- Normal mode
+
 -- Yanky
 map("n", "p", "<Plug>(YankyPutAfter)", { desc = "Yanky put after" })
 map("n", "P", "<Plug>(YankyPutBefore)", { desc = "Yanky put before" })

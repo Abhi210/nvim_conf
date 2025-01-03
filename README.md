@@ -43,10 +43,12 @@ Welcome to my Neovim configuration repository! This setup is designed to enhance
 
 - **[treesitter](https://github.com/nvim-treesitter/nvim-treesitter)**: Enhanced syntax highlighting and code structure awareness.
 
+### Other useful plugins
+- **[kitty-scrollback.nvim](https://github.com/mikesmithgh/kitty-scrollback.nvim)**: For Kitty Scrollback
+
 ---
 
 Feel free to explore the configuration and customize it to your needs! For more information or contributions, check out the individual plugin repositories linked above.
-
 
 
 Note: This README.md was created with the help of ChatGPT with minor corrections.
