@@ -50,6 +50,10 @@ Welcome to my Neovim configuration repository! This setup is designed to enhance
 - **[yanky](https://github.com/gbprod/yanky.nvim)**: Enhances the default yank and paste functionality in Neovim.
 
 - **[multicursors.nvim](https://github.com/smoka7/multicursors.nvim)**: For Multicursor Editing (Like VS Code)
+
+- **[bufferline.nvim](https://github.com/akinsho/bufferline.nvim?tab=readme-ov-file#configuration)**: Managing tabs like VS Code
+
+- **[kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim/tree/master)**: Kanagawa theme
 ---
 
 Feel free to explore the configuration and customize it to your needs! For more information or contributions, check out the individual plugin repositories linked above.
