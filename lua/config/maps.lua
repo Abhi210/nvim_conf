@@ -70,3 +70,7 @@ map("o", "z", "<Plug>(leap-forward)", { desc = "Leap forward" })
 map("o", "Z", "<Plug>(leap-backward)", { desc = "Leap backward" })
 map("o", "x", "<Plug>(leap-forward-x)", { desc = "Leap forward x" })
 map("o", "X", "<Plug>(leap-backward-x)", { desc = "Leap backward x" })
+ 
+
+--autopairs jump
+map("i","<A-l>","<ESC>A",{desc = "Go to the end of matching brackets"})
