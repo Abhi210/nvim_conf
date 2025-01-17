@@ -27,3 +27,64 @@ o.inccommand = "split" -- When nonempty, shows the effects of :substitute, :smag
 o.splitright = true
 o.splitbelow = true -- When on, splitting a window will put the new window below the current one
 o.termguicolors = true
+
+o.formatoptions    = o.formatoptions
+    - "a"                                   -- Auto formatting is BAD.
+    - "t"                                   -- Don't auto format my code. I got linters for that.
+    + "c"                                   -- In general, I like it when comments respect textwidth
+    + "q"                                   -- Allow formatting comments w/ gq
+    + "r"                                   -- But do continue when pressing enter.
+    + "n"                                   -- Indent past the formatlistpat, not underneath it.
+    + "j"                                   -- Auto-remove comments if possible.
+    - "2"                                   -- I'm not in gradeschool anymore
+
+o.ignorecase       = true                   -- ignore case on search
+
+o.smartcase        = true                   -- case sensitive when search includes uppercase
+o.showmatch        = true                   -- highlight matching [{()}]
+vim.o.cpoptions    = vim.o.cpoptions .. "x" -- stay on search item when <esc>
+
+-- O and o, don't continue comments
+
+vim.cmd('autocmd BufEnter * set formatoptions-=o')
+vim.cmd('autocmd BufEnter * setlocal formatoptions-=o')
+
+-- Restore cursor to file position in previous editing session
+
+vim.api.nvim_create_autocmd("BufReadPost", {
+    callback = function(args)
+        local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+        local line_count = vim.api.nvim_buf_line_count(args.buf)
+        if mark[1] > 0 and mark[1] <= line_count then
+            vim.cmd('normal! g`"zz')
+        end
+    end,
+})
+
+-- Dim inactive windows
+
+vim.cmd("highlight default DimInactiveWindows guifg=#666666")
+
+-- When leaving a window, set all highlight groups to a "dimmed" hl_group
+
+vim.api.nvim_create_autocmd({ "WinLeave" }, {
+    callback = function()
+        local highlights = {}
+        for hl, _ in pairs(vim.api.nvim_get_hl(0, {})) do
+            table.insert(highlights, hl .. ":DimInactiveWindows")
+        end
+        vim.wo.winhighlight = table.concat(highlights, ",")
+    end,
+})
+
+-- When entering a window, restore all highlight groups to original
+vim.api.nvim_create_autocmd({ "WinEnter" }, {
+    callback = function()
+        vim.wo.winhighlight = ""
+    end,
+})
+
+-- Auto resize splits when the terminal's window is resized
+vim.api.nvim_create_autocmd("VimResized", {
+    command = "wincmd =",
+})
