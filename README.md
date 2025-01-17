@@ -24,6 +24,7 @@ Welcome to my Neovim configuration repository! This setup is designed to enhance
 
 - **[neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim)**: File explorer with enhanced features.
 - **[move](https://github.com/fedepujol/move.nvim)**: Easily move lines and blocks of code.
+- **[diffview](https://github.com/sindrets/diffview.nvim)**: For diff mode
 
 ### Coding Tools
 
