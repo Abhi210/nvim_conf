@@ -28,6 +28,21 @@ o.splitright = true
 o.splitbelow = true -- When on, splitting a window will put the new window below the current one
 o.termguicolors = true
 
+-- General productivity
+o.updatetime = 300        -- Faster update for CursorHold events (LSP diagnostics)
+o.signcolumn = "yes"      -- Always show the sign column to prevent text reflow
+o.undodir = vim.fn.stdpath("data") .. "/undodir" -- Directory for undo files
+o.undofile = true         -- Enable persistent undo
+o.swapfile = false        -- Disable swap files (persistent undo is better)
+o.cmdheight = 1           -- Command line height
+o.scrolloff = 8           -- Keep 8 lines above/below the cursor
+o.sidescrolloff = 8       -- Keep 8 columns left/right of the cursor
+o.pumheight = 10          -- Max items shown in the completion popup
+o.linebreak = true        -- Wrap long lines at word boundaries, not mid-word
+o.list = true             -- Show invisible characters (see listchars)
+o.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+o.winblend = 0            -- Popup transparency (0 = opaque)
+
 o.formatoptions    = o.formatoptions
     - "a"                                   -- Auto formatting is BAD.
     - "t"                                   -- Don't auto format my code. I got linters for that.
@@ -58,29 +73,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
         if mark[1] > 0 and mark[1] <= line_count then
             vim.cmd('normal! g`"zz')
         end
-    end,
-})
-
--- Dim inactive windows
-
-vim.cmd("highlight default DimInactiveWindows guifg=#666666")
-
--- When leaving a window, set all highlight groups to a "dimmed" hl_group
-
-vim.api.nvim_create_autocmd({ "WinLeave" }, {
-    callback = function()
-        local highlights = {}
-        for hl, _ in pairs(vim.api.nvim_get_hl(0, {})) do
-            table.insert(highlights, hl .. ":DimInactiveWindows")
-        end
-        vim.wo.winhighlight = table.concat(highlights, ",")
-    end,
-})
-
--- When entering a window, restore all highlight groups to original
-vim.api.nvim_create_autocmd({ "WinEnter" }, {
-    callback = function()
-        vim.wo.winhighlight = ""
     end,
 })
 

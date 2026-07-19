@@ -45,6 +45,14 @@ return {
                     },
                     pattern = [[\b(KEYWORDS):]], -- ripgrep regex
                 },
+                colors = {
+                    error = { "#f7768e" },
+                    info = { "#7aa2f7" },
+                    warning = { "#e0af68" },
+                    hint = { "#41a6b5" },
+                    default = { "#a9b1d6" },
+                    test = { "#0db9d7" },
+                }
             })
 
             -- Keybindings for todo-comments

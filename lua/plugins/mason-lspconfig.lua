@@ -1,131 +1,83 @@
--- ~/.config/nvim/lua/plugins/lspconfig.lua
+-- LSP server configuration using the native vim.lsp.config / vim.lsp.enable API (Neovim 0.11+).
+-- nvim-lspconfig is kept installed purely for its bundled default configs (cmd, filetypes,
+-- root_markers) that ship under its `lsp/` runtime directory.
 return {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-        "hrsh7th/cmp-nvim-lsp",
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
-        { "folke/neodev.nvim", opts = {} },
-        "ray-x/lsp_signature.nvim",
-        -- Add these for better documentation display
-        { "folke/neodev.nvim", opts = {} },
-        {
-            "dnlhc/glance.nvim",
-            config = function()
-                require('glance').setup({
-                    -- Config options
-                    preview_win_opts = {
-                        wrap = true,
-                        number = true,
-                    },
-                })
-            end,
-        },
-    },
-    config = function()
-        local nvim_lsp = require("lspconfig")
-        
-        -- Configure how documentation is displayed
-        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-            vim.lsp.handlers.hover, {
-                -- Make the hover window larger
-                max_width = 80,
-                max_height = 30,
-                -- Show border
-                border = "rounded",
-            }
-        )
+	"neovim/nvim-lspconfig",
+	event = { "BufReadPre", "BufNewFile" },
+	dependencies = {
+		{
+			"dnlhc/glance.nvim",
+			opts = {
+				preview_win_opts = { wrap = true, number = true },
+				theme = {
+					glance_border = { fg = "#41a6b5" },
+					glance_preview_border = { fg = "#41a6b5" },
+					glance_search_border = { fg = "#41a6b5" },
+				},
+			},
+		},
+	},
+	config = function()
+		-- Global float borders (replaces the deprecated vim.lsp.with(vim.lsp.handlers.hover, ...)).
+		vim.o.winborder = "rounded"
 
-        -- Enhanced signature help configuration
-        require("lsp_signature").setup({
-            bind = true,
-            handler_opts = {
-                border = "rounded"
-            },
-            hint_enable = true,
-            hint_prefix = "🔍 ",
-            max_width = 80,
-            max_height = 30,
-            toggle_key = '<C-k>', -- Press Ctrl+k to toggle signature
-            doc_lines = 10, -- Show more lines of docs
-            floating_window = true, -- Show docs in floating window
-            floating_window_above_cur_line = true,
-            -- Show more context in the documentation
-            extra_trigger_chars = {"(", ","},
-            -- Show parameter documentation
-            parameter_hints_prefix = "󰆧 ",
-            hint_scheme = "String",
-        })
+		-- Diagnostics display
+		vim.diagnostic.config({
+			virtual_text = true,
+			underline = true,
+			update_in_insert = false,
+			severity_sort = true,
+			float = { border = "rounded", source = true },
+		})
 
-        local on_attach = function(client, bufnr)
-            -- Other keybindings remain the same
-            local opts = { noremap = true, silent = true, buffer = bufnr }
-            
-            -- Enhanced documentation viewing
-            vim.keymap.set('n', 'K', function()
-                -- Show hover documentation
-                vim.lsp.buf.hover()
-            end, opts)
-            
-            -- Show signature help when inside parentheses
-            vim.keymap.set('i', '<C-k>', function()
-                require('lsp_signature').signature()
-            end, opts)
-        end
+		-- Completion capabilities from blink.cmp, applied to every server via the '*' wildcard.
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		local ok, blink = pcall(require, "blink.cmp")
+		if ok then
+			capabilities = blink.get_lsp_capabilities(capabilities)
+		end
+		vim.lsp.config("*", { capabilities = capabilities })
 
-        -- Pyright configuration with enhanced documentation
-      --  nvim_lsp.pyright.setup({
-      --      on_attach = on_attach,
-      --      capabilities = require("cmp_nvim_lsp").default_capabilities(),
-      --      settings = {
-      --          python = {
-      --              analysis = {
-      --                  autoSearchPaths = true,
-      --                  diagnosticMode = "workspace",
-      --                  useLibraryCodeForTypes = true,
-      --                  typeCheckingMode = "basic",
-      --                  stubPath = vim.fn.stdpath("data") .. "/lazy/python-type-stubs",
-      --              },
-      --          },
-      --      },
-      --      -- Add this for better docstring support
-      --      on_init = function(client)
-      --          client.server_capabilities.signatureHelpProvider = {
-      --              triggerCharacters = {"(", ","}
-      --          }
-      --          return true
-      --      end,
-      --  })
+		-- Per-server overrides (merged on top of nvim-lspconfig's shipped defaults).
+		vim.lsp.config("pyright", {
+			settings = {
+				python = {
+					analysis = {
+						autoSearchPaths = true,
+						diagnosticMode = "workspace",
+						useLibraryCodeForTypes = true,
+						typeCheckingMode = "basic",
+					},
+				},
+			},
+		})
 
-      -- Add this to your LSP config
-        nvim_lsp.jedi_language_server.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            init_options = {
-                completion = {
-                    disableSnippets = false,
-                    resolveEagerly = true,
-                    ignorePatterns = {},
-                },
-                diagnostics = {
-                    enable = true,
-                    didOpen = true,
-                    didChange = true,
-                    didSave = true,
-                },
-                hover = {
-                    enable = true,
-                    disable = {},
-                },
-                workspace = {
-                    symbols = {
-                        maxSymbols = 20,
-                    },
-                    environment = nil,  -- Use default Python environment
-                },
-                markupKindPreferred = "markdown",  -- Show documentation in markdown format
-            },
-        })
-    end,
+		vim.lsp.config("lua_ls", {
+			settings = {
+				Lua = {
+					diagnostics = { globals = { "vim" } },
+				},
+			},
+		})
+
+		-- ruff (lint) and clangd (C/C++) use their shipped defaults.
+		vim.lsp.enable({ "pyright", "ruff", "lua_ls", "clangd" })
+
+		-- Buffer-local keymaps when a language server attaches.
+		-- Note: on 0.11 K, grn, gra, grr, gri, [d, ]d are already built-in defaults.
+		vim.api.nvim_create_autocmd("LspAttach", {
+			callback = function(args)
+				local opts = { buffer = args.buf, silent = true }
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+				vim.keymap.set("n", "gD", vim.lsp.buf.type_definition, opts)
+				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+				vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+				-- Glance (nicer preview windows for LSP locations)
+				vim.keymap.set("n", "gL", "<CMD>Glance definitions<CR>", opts)
+				vim.keymap.set("n", "gR", "<CMD>Glance references<CR>", opts)
+				vim.keymap.set("n", "gY", "<CMD>Glance type_definitions<CR>", opts)
+			end,
+		})
+	end,
 }

@@ -15,7 +15,7 @@ return {
                 middle_mouse_command = nil,
                 indicator = {
                     icon = '▎', -- This is a slightly different character
-                    style = 'icon',
+                    style = 'bold,italic',
                 },
                 buffer_close_icon = '󰅖',
                 modified_icon = '●',
@@ -53,6 +53,36 @@ return {
                     delay = 200,
                     reveal = {'close'}
                 },
+                highlights = {
+                    fill = {
+                        bg = "#1f1f28"
+                    },
+                    background = {
+                        bg = "#1f1f28"
+                    },
+
+                    -- Active tab
+                    buffer_selected = {
+                        fg = "#f7768e",
+                        bg = "#363646",
+                        bold = true,
+                        italic = true,
+                    },
+
+                    -- Inactive tabs
+                    buffer_visible = {
+                        fg = "#a9b1d6",
+                        bg = "#1f1f28"
+                    },
+
+                    -- Modified tab
+                    modified_selected = {
+                        fg = "#f7768e",
+                        bg = "#363646",
+                        bold = true,
+                        italic = true,
+                    },
+                }
             }
         })
 

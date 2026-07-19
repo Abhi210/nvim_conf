@@ -95,4 +95,8 @@ print("Thank You ")
 
 print("Added some more configuration to nvim")
 
+
+print("/home/abhishek/GTC/")
+
+d= np.random.normal()
 # This is going to be comment using which-key hints

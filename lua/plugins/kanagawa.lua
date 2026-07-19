@@ -18,7 +18,12 @@ return {
             transparent = false,         -- Do not set background color
             dimInactive = false,         -- Dim inactive windows
             terminalColors = true,       -- Define vim.g.terminal_color_{0,17}
-            theme = "default"    -- Load "default" theme or "dragon" theme
+            theme = "default",    -- Load "default" theme or "dragon" theme
+            overrides = function(colors) -- Overwrite the colors
+                return {
+                    NormalNC = { bg = colors.palette.sumiInk1 },
+                }
+            end
         })
 
         -- Set colorscheme after options

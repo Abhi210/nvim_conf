@@ -7,33 +7,33 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- Save
-map("n", "<leader>w", "<CMD>update<CR>")
+map("n", "<leader>w", "<CMD>update<CR>", { desc = "Save File" })
 
 -- Quit
-map("n", "<leader>q", "<CMD>q<CR>")
+map("n", "<leader>q", "<CMD>q<CR>", { desc = "Quit Neovim" })
 
 -- Exit insert mode
-map("i", "jk", "<ESC>")
+map("i", "jk", "<ESC>", { desc = "Exit Insert Mode" })
 
 -- NeoTree
-map("n", "<leader>e", "<CMD>Neotree toggle<CR>")
-map("n", "<leader>r", "<CMD>Neotree focus<CR>")
+map("n", "<leader>e", "<CMD>Neotree toggle<CR>", { desc = "Toggle NeoTree" })
+map("n", "<leader>r", "<CMD>Neotree focus<CR>", { desc = "Focus NeoTree" })
 
 -- New Windows
-map("n", "<leader>o", "<CMD>vsplit<CR>")
-map("n", "<leader>p", "<CMD>split<CR>")
+map("n", "<leader>o", "<CMD>vsplit<CR>", { desc = "New Vertical Split" })
+map("n", "<leader>p", "<CMD>split<CR>", { desc = "New Horizontal Split" })
 
 -- Window Navigation
-map("n", "<C-h>", "<C-w>h")
-map("n", "<C-l>", "<C-w>l")
-map("n", "<C-k>", "<C-w>k")
-map("n", "<C-j>", "<C-w>j")
+map("n", "<C-h>", "<C-w>h", { desc = "Window Left" })
+map("n", "<C-l>", "<C-w>l", { desc = "Window Right" })
+map("n", "<C-j>", "<C-w>j", { desc = "Window Down" })
+map("n", "<C-k>", "<C-w>k", { desc = "Window Up" })
 
 -- Resize Windows
-map("n", "<C-Left>", "<C-w><")
-map("n", "<C-Right>", "<C-w>>")
-map("n", "<C-Up>", "<C-w>+")
-map("n", "<C-Down>", "<C-w>-")
+map("n", "<C-Left>", "<C-w><", { desc = "Resize Window Shrink" })
+map("n", "<C-Right>", "<C-w>>", { desc = "Resize Window Grow" })
+map("n", "<C-Up>", "<C-w>+", { desc = "Resize Window Tall" })
+map("n", "<C-Down>", "<C-w>-", { desc = "Resize Window Short" })
 
 -- Telescope
 map("n", "<leader>ff", "<CMD>Telescope find_files<CR>", { desc = "Fuzzy find files in cwd" })
@@ -42,10 +42,20 @@ map("n", "<leader>fb", "<CMD>Telescope buffers<CR>", { desc = "Fuzzy find opened
 map("n", "<leader>fs", "<CMD>Telescope git_status<CR>", { desc = "Show git file diffs" })
 map("n", "<leader>fc", "<CMD>Telescope git_commits<CR>", { desc = "Browse git commits" })
 
--- Workspaces
-map('n', '<leader>wn', '<cmd>WorkspacesOpen nvim<CR>', { desc = "Nvim config" })
-map('n', '<leader>wr', '<cmd>WorkspacesOpen reascripts<CR>', { desc = "ReaScripts" })
-map('n', '<leader>?', '<cmd>Cheatsheet<cr>', { desc = "Cheatsheet" })
+-- Command palette (legendary) - most-used shortcuts float to the top
+map('n', '<leader>?', '<cmd>Legendary<CR>', { desc = "Command palette (frecency)" })
+map('n', '<leader><leader>', '<cmd>Legendary<CR>', { desc = "Command palette (frecency)" })
+
+-- Format (conform). Normal: whole buffer. Visual: only the selected lines (minimal diff).
+map({ "n", "v" }, '<leader>gf', function() require("conform").format({ lsp_format = "fallback" }) end, { desc = "Format buffer/selection" })
+-- Toggle format-on-save (off by default so it never rewrites whole files)
+map('n', '<leader>uf', '<CMD>FormatToggle<CR>', { desc = "Toggle format-on-save" })
+
+-- Terminal (toggleterm)
+map('n', '<leader>t', '<cmd>ToggleTerm direction=float<CR>', { desc = "Toggle floating terminal" })
+
+-- Zen-mode
+map('n', '<leader>z', '<cmd>ZenMode<CR>', { desc = "Toggle Zen Mode" })
 
 -- Copy to system clipboard
 map('v', '<C-C>', '"+y', { desc = 'Copy to system clipboard' })  -- Visual mode
@@ -63,14 +73,7 @@ map("x", "gP", "<Plug>(YankyGPutBefore)", { desc = "Yanky put before" })
 map("n", "<c-n>", "<Plug>(YankyCycleForward)", { desc = "Yanky cycle forward" })
 map("n", "<c-p>", "<Plug>(YankyCycleBackward)", { desc = "Yanky cycle backward" })
 
--- Leap
-map("n", "s", "<Plug>(leap-forward)", { desc = "Leap forward" })
-map("n", "S", "<Plug>(leap-backward)", { desc = "Leap backward" })
-map("o", "z", "<Plug>(leap-forward)", { desc = "Leap forward" })
-map("o", "Z", "<Plug>(leap-backward)", { desc = "Leap backward" })
-map("o", "x", "<Plug>(leap-forward-x)", { desc = "Leap forward x" })
-map("o", "X", "<Plug>(leap-backward-x)", { desc = "Leap backward x" })
- 
+-- Flash (jump / motions) - keymaps registered by the plugin itself (see plugins/flash.lua)
 
 --autopairs jump
 map("i","<A-l>","<ESC>A",{desc = "Go to the end of matching brackets"})

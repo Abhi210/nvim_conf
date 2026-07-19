@@ -1,0 +1,9 @@
+# Old config backups (machine-local, not part of the setup)
+bac/
+
+# Unrelated tool state
+.gemini/
+
+# Local plugin/tool state lives under ~/.local/share/nvim (outside this repo):
+# lazy plugins, mason packages, undo history, shada, swap — all regenerated
+# automatically on a new device, so nothing to track here.
