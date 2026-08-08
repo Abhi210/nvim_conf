@@ -39,14 +39,42 @@ return {
 		vim.lsp.config("*", { capabilities = capabilities })
 
 		-- Per-server overrides (merged on top of nvim-lspconfig's shipped defaults).
+
+		-- Resolve the interpreter pyright should use for import resolution.
+		-- Without this, pyright falls back to the system python and reports every
+		-- third-party import as missing. :VenvSelect (,v) overrides this at runtime.
+		local function resolve_python(root)
+			if vim.env.VIRTUAL_ENV then
+				return vim.env.VIRTUAL_ENV .. "/bin/python"
+			end
+			for _, dir in ipairs({ ".venv", "venv", "env" }) do
+				local py = root and (root .. "/" .. dir .. "/bin/python")
+				if py and vim.uv.fs_stat(py) then
+					return py
+				end
+			end
+			return vim.fn.exepath("python3")
+		end
+
 		vim.lsp.config("pyright", {
+			-- Must be on_init, not before_init: client.settings is copied from the config
+			-- before before_init runs, so mutating it there is too late. pyright pulls
+			-- settings via workspace/configuration after initialize, so this lands in time.
+			on_init = function(client)
+				client.settings = vim.tbl_deep_extend("force", client.settings or {}, {
+					python = { pythonPath = resolve_python(client.root_dir) },
+				})
+			end,
 			settings = {
 				python = {
 					analysis = {
 						autoSearchPaths = true,
-						diagnosticMode = "workspace",
+						-- Was "workspace", which made pyright type-check every .py file
+						-- under the root (including site-packages) and stall on exit.
+						diagnosticMode = "openFilesOnly",
 						useLibraryCodeForTypes = true,
 						typeCheckingMode = "basic",
+						exclude = { "**/.venv", "**/venv", "**/env", "**/node_modules", "**/__pycache__", "**/.git" },
 					},
 				},
 			},
@@ -62,6 +90,15 @@ return {
 
 		-- ruff (lint) and clangd (C/C++) use their shipped defaults.
 		vim.lsp.enable({ "pyright", "ruff", "lua_ls", "clangd" })
+
+		-- Safety net: on :qa Neovim asks each server to shut down gracefully and blocks
+		-- waiting for it. A server busy in a long analysis pass never answers, hanging
+		-- the editor. Kill them outright instead -- nothing needs saving at this point.
+		vim.api.nvim_create_autocmd("VimLeavePre", {
+			callback = function()
+				vim.lsp.stop_client(vim.lsp.get_clients(), true)
+			end,
+		})
 
 		-- Buffer-local keymaps when a language server attaches.
 		-- Note: on 0.11 K, grn, gra, grr, gri, [d, ]d are already built-in defaults.
